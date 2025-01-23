@@ -1,0 +1,115 @@
+#include <Servo.h>
+
+// Pin definitions
+const int TRIG_PIN = 10;
+const int ECHO_PIN = 9;
+const int BUZZER_PIN = 8;
+const int BUTTON_PIN = 13;
+const int SERVO_PIN = 7;
+
+// Constants for configuration
+const int DISTANCE_THRESHOLD = 20;    // cm
+const int GATE_OPEN_ANGLE = 90;
+const int GATE_CLOSED_ANGLE = 0;
+const int GATE_OPEN_DURATION = 5000;  // ms
+const int BUZZER_ON_TIME = 200;       // ms
+const int BUZZER_OFF_TIME = 200;      // ms
+const int LOOP_DELAY = 100;           // ms
+const int RETRIGGER_DELAY = 1000;     // ms
+
+Servo gateServo;
+bool vehicleDetected = false;
+
+void initializePins() {
+    pinMode(TRIG_PIN, OUTPUT);
+    pinMode(ECHO_PIN, INPUT);
+    pinMode(BUZZER_PIN, OUTPUT);
+    pinMode(BUTTON_PIN, INPUT_PULLUP);
+}
+
+void initializeServo() {
+    gateServo.attach(SERVO_PIN);
+    gateServo.write(GATE_CLOSED_ANGLE);
+}
+
+void setup() {
+    initializePins();
+    initializeServo();
+    
+    Serial.begin(9600);
+    Serial.println("System initialized");
+}
+
+int getDistance() {
+    digitalWrite(TRIG_PIN, LOW);
+    delayMicroseconds(2);
+    digitalWrite(TRIG_PIN, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(TRIG_PIN, LOW);
+    
+    long duration = pulseIn(ECHO_PIN, HIGH);
+    return duration * 0.034 / 2;
+}
+
+void soundBuzzer() {
+    digitalWrite(BUZZER_PIN, HIGH);
+    delay(BUZZER_ON_TIME);
+    digitalWrite(BUZZER_PIN, LOW);
+    delay(BUZZER_OFF_TIME);
+}
+
+void stopBuzzer() {
+    digitalWrite(BUZZER_PIN, LOW);
+}
+
+void waitForButtonPress() {
+    Serial.println("Waiting for button press...");
+    while (digitalRead(BUTTON_PIN)) {
+        soundBuzzer();
+    }
+    stopBuzzer();
+    Serial.println("Button pressed");
+}
+
+void openGate() {
+    Serial.println("Opening gate");
+    gateServo.write(GATE_OPEN_ANGLE);
+}
+
+void closeGate() {
+    Serial.println("Closing gate");
+    gateServo.write(GATE_CLOSED_ANGLE);
+}
+
+void operateGate() {
+    openGate();
+    delay(GATE_OPEN_DURATION);
+    closeGate();
+    delay(RETRIGGER_DELAY);  // Prevent immediate retriggering
+}
+
+bool isVehiclePresent(int distance) {
+    return distance < DISTANCE_THRESHOLD;
+}
+
+void handleVehicleDetection() {
+    vehicleDetected = true;
+    Serial.println("Vehicle detected!");
+    
+    waitForButtonPress();
+    operateGate();
+    
+    vehicleDetected = false;
+}
+
+void loop() {
+    int distance = getDistance();
+    Serial.print("Distance: ");
+    Serial.println(distance);
+
+    if (isVehiclePresent(distance) && !vehicleDetected) {
+        handleVehicleDetection();
+    }
+    
+    delay(LOOP_DELAY);
+}

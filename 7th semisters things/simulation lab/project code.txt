@@ -1,0 +1,75 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load dataset
+data = pd.read_csv("/content/drive/MyDrive/simulation lab/epidemic_data.csv")
+
+# Function to simulate epidemic spread using Monte Carlo (SIR model)
+def simulate_epidemic(population, initial_infected, infection_rate, recovery_rate, time_steps=100):
+    # Initialize compartments
+    S = population - initial_infected  # Susceptible
+    I = initial_infected  # Infected
+    R = 0  # Recovered
+
+    # Lists to store results
+    susceptible = [S]
+    infected = [I]
+    recovered = [R]
+
+    # Simulation loop
+    for t in range(time_steps):
+        # Calculate new infections and recoveries using binomial sampling
+        new_infected = np.random.binomial(S, infection_rate * I / population)
+        new_recovered = np.random.binomial(I, recovery_rate)
+
+        # Update compartments
+        S -= new_infected
+        I += new_infected - new_recovered
+        R += new_recovered
+
+        # Record current state
+        susceptible.append(S)
+        infected.append(I)
+        recovered.append(R)
+
+    return susceptible, infected, recovered
+
+# Simulate for all regions in the dataset
+results = {}
+time_steps = 100
+
+for index, row in data.iterrows():
+    region = row["region"]
+    population = row["population"]
+    initial_infected = row["initial_infected"]
+    infection_rate = row["infection_rate"]
+    recovery_rate = row["recovery_rate"]
+
+    # Run simulation
+    S, I, R = simulate_epidemic(population, initial_infected, infection_rate, recovery_rate, time_steps)
+
+    # Store results
+    results[region] = {"S": S, "I": I, "R": R}
+
+    # Plot results for the region
+    plt.figure(figsize=(10, 6))
+    plt.plot(S, label="Susceptible", color="blue")
+    plt.plot(I, label="Infected", color="red")
+    plt.plot(R, label="Recovered", color="green")
+    plt.title(f"Epidemic Simulation for {region}")
+    plt.xlabel("Time Steps")
+    plt.ylabel("Number of Individuals")
+    plt.legend()
+    plt.grid()
+    plt.show()
+
+# Analyze results for all regions
+for region, result in results.items():
+    peak_infected = max(result["I"])
+    total_recovered = result["R"][-1]
+
+    print(f"Region: {region}")
+    print(f"  Peak Infected: {peak_infected}")
+    print(f"  Total Recovered: {total_recovered}")
+    print()

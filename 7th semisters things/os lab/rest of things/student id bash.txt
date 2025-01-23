@@ -1,0 +1,14 @@
+#!/bin/bash
+generateUniqueID() {
+    local studentID=$1
+    local uniqueCode=0
+    for (( i=0; i<${#studentID}; i++ )); do
+        uniqueCode=$(( uniqueCode + $(printf "%d" "'${studentID:$i:1}") ))
+    done
+    echo "Unique ID based on Student ID ($studentID): $uniqueCode"
+}
+
+studentID="YourStudentID"
+generateUniqueID $studentID
+
+

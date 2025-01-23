@@ -1,0 +1,712 @@
+1 and 2: LED with Push Button + RGB LED
+int buttonPin = 2; // Push button pin
+int redPin = 9;
+int greenPin = 10;
+int bluePin = 11;
+int buttonState = 0;
+
+void setup() {
+  pinMode(buttonPin, INPUT);
+  pinMode(redPin, OUTPUT);
+  pinMode(greenPin, OUTPUT);
+  pinMode(bluePin, OUTPUT);
+}
+
+void loop() {
+  buttonState = digitalRead(buttonPin);
+
+  if (buttonState == HIGH) {
+    digitalWrite(redPin, HIGH);   // Red ON
+    digitalWrite(greenPin, LOW); // Green OFF
+    digitalWrite(bluePin, LOW);  // Blue OFF
+  } else {
+    digitalWrite(redPin, LOW);   // Red OFF
+    digitalWrite(greenPin, HIGH); // Green ON
+    digitalWrite(bluePin, HIGH); // Blue ON
+  }
+}
+1 and 3: LED Blink Rate Controlled by Potentiometer
+int ledPin = 13;
+int potPin = A0;
+int blinkDelay = 0;
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  blinkDelay = analogRead(potPin) / 4; // Map 0-1023 to 0-255
+  Serial.println(blinkDelay);
+
+  digitalWrite(ledPin, HIGH);
+  delay(blinkDelay);
+  digitalWrite(ledPin, LOW);
+  delay(blinkDelay);
+}
+1 and 4: LED Brightness Based on Light Detection
+int ledPin = 9;    // LED pin
+int photoPin = A0; // Photoresistor pin
+int brightness = 0;
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  brightness = analogRead(photoPin) / 4; // Scale to 0-255
+  analogWrite(ledPin, brightness);
+
+  Serial.print("Light Intensity: ");
+  Serial.println(brightness);
+  delay(100);
+}
+1 and 5: LED + Temperature Sensor (LM35)
+int ledPin = 13;
+int LM35Pin = A0;
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int temp = analogRead(LM35Pin);
+  temp = (temp * 5.0 * 100.0) / 1023; // Convert to Celsius
+  
+  if (temp > 30) {
+    digitalWrite(ledPin, HIGH); // Turn LED ON
+  } else {
+    digitalWrite(ledPin, LOW); // Turn LED OFF
+  }
+
+  Serial.print("Temperature: ");
+  Serial.print(temp);
+  Serial.println(" C");
+  delay(500);
+}
+1 and 6: LED with Push Button + Servo Motor
+#include <Servo.h>
+
+int buttonPin = 2; // Push button pin
+Servo myServo;
+int buttonState = 0;
+
+void setup() {
+  pinMode(buttonPin, INPUT);
+  myServo.attach(9);
+}
+
+void loop() {
+  buttonState = digitalRead(buttonPin);
+
+  if (buttonState == HIGH) {
+    myServo.write(90); // Move servo to 90 degrees
+  } else {
+    myServo.write(0); // Reset servo to 0 degrees
+  }
+
+  delay(100);
+}
+1 and 7: LED with Push Button + Buzzer
+int buttonPin = 2; // Push button pin
+int buzzerPin = 9;
+int ledPin = 13;
+
+void setup() {
+  pinMode(buttonPin, INPUT);
+  pinMode(buzzerPin, OUTPUT);
+  pinMode(ledPin, OUTPUT);
+}
+
+void loop() {
+  if (digitalRead(buttonPin) == HIGH) {
+    digitalWrite(buzzerPin, HIGH); // Turn buzzer ON
+    digitalWrite(ledPin, HIGH);    // Turn LED ON
+  } else {
+    digitalWrite(buzzerPin, LOW);  // Turn buzzer OFF
+    digitalWrite(ledPin, LOW);     // Turn LED OFF
+  }
+
+  delay(100);
+}
+1 and 8: LED with Push Button + Ultrasonic Sensor
+#include <NewPing.h>
+
+int buttonPin = 2; // Push button pin
+int ledPin = 13;
+#define TRIG_PIN 9
+#define ECHO_PIN 10
+
+NewPing sonar(TRIG_PIN, ECHO_PIN, 200);
+
+void setup() {
+  pinMode(buttonPin, INPUT);
+  pinMode(ledPin, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int distance = sonar.ping_cm();
+
+  if (digitalRead(buttonPin) == HIGH && distance < 20) {
+    digitalWrite(ledPin, HIGH); // Turn LED ON if button pressed and object is close
+  } else {
+    digitalWrite(ledPin, LOW); // Turn LED OFF
+  }
+
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+  delay(100);
+}
+2 and 3: RGB LED + Potentiometer (Control RGB Brightness)
+int redPin = 9;
+int greenPin = 10;
+int bluePin = 11;
+int potPin = A0;
+
+void setup() {
+  pinMode(redPin, OUTPUT);
+  pinMode(greenPin, OUTPUT);
+  pinMode(bluePin, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int potValue = analogRead(potPin);
+  int brightness = map(potValue, 0, 1023, 0, 255);
+
+  analogWrite(redPin, brightness);   // Adjust red intensity
+  analogWrite(greenPin, 255 - brightness); // Opposite for green
+  analogWrite(bluePin, brightness / 2); // Dim blue proportionally
+
+  Serial.println(brightness);
+  delay(100);
+}
+2 and 4: RGB LED + Light Detection (Adjust Color Based on Light Intensity)
+int redPin = 9;
+int greenPin = 10;
+int bluePin = 11;
+int photoPin = A0;
+
+void setup() {
+  pinMode(redPin, OUTPUT);
+  pinMode(greenPin, OUTPUT);
+  pinMode(bluePin, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int lightIntensity = analogRead(photoPin);
+  int brightness = map(lightIntensity, 0, 1023, 0, 255);
+
+  analogWrite(redPin, brightness);        // Red intensity
+  analogWrite(greenPin, 255 - brightness); // Green intensity inverse
+  analogWrite(bluePin, brightness / 2);   // Dim blue
+
+  Serial.print("Light Intensity: ");
+  Serial.println(brightness);
+  delay(100);
+}
+2 and 5: RGB LED + Temperature Sensor (Color Change Based on Temperature)
+int redPin = 9;
+int greenPin = 10;
+int bluePin = 11;
+int tempPin = A0;
+
+void setup() {
+  pinMode(redPin, OUTPUT);
+  pinMode(greenPin, OUTPUT);
+  pinMode(bluePin, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int tempValue = analogRead(tempPin);
+  int tempC = (tempValue * 5.0 * 100.0) / 1023;
+
+  if (tempC < 20) {
+    analogWrite(redPin, 0);
+    analogWrite(greenPin, 0);
+    analogWrite(bluePin, 255); // Cool color
+  } else if (tempC >= 20 && tempC <= 30) {
+    analogWrite(redPin, 0);
+    analogWrite(greenPin, 255);
+    analogWrite(bluePin, 0); // Neutral color
+  } else {
+    analogWrite(redPin, 255);
+    analogWrite(greenPin, 0);
+    analogWrite(bluePin, 0); // Warm color
+  }
+
+  Serial.print("Temperature: ");
+  Serial.println(tempC);
+  delay(500);
+}
+2 and 6: RGB LED + Servo Motor (Servo Angle Adjusts Color)
+#include <Servo.h>
+Servo myServo;
+
+int potPin = A0;
+int redPin = 9;
+int greenPin = 10;
+int bluePin = 11;
+
+void setup() {
+  myServo.attach(3);
+  pinMode(redPin, OUTPUT);
+  pinMode(greenPin, OUTPUT);
+  pinMode(bluePin, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int potValue = analogRead(potPin);
+  int angle = map(potValue, 0, 1023, 0, 180);
+  myServo.write(angle);
+
+  analogWrite(redPin, map(angle, 0, 180, 0, 255));   // Red changes with angle
+  analogWrite(greenPin, map(angle, 0, 180, 255, 0)); // Green inverse
+  analogWrite(bluePin, 128);                         // Static blue
+
+  Serial.print("Servo Angle: ");
+  Serial.println(angle);
+  delay(100);
+}
+2 and 7: RGB LED + Active Buzzer (Buzzer Sounds at Specific Colors)
+int redPin = 9;
+int greenPin = 10;
+int bluePin = 11;
+int buzzerPin = 8;
+int potPin = A0;
+
+void setup() {
+  pinMode(redPin, OUTPUT);
+  pinMode(greenPin, OUTPUT);
+  pinMode(bluePin, OUTPUT);
+  pinMode(buzzerPin, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int potValue = analogRead(potPin);
+  int brightness = map(potValue, 0, 1023, 0, 255);
+
+  analogWrite(redPin, brightness);
+  analogWrite(greenPin, 255 - brightness);
+  analogWrite(bluePin, brightness / 2);
+
+  if (brightness > 200) {
+    tone(buzzerPin, 1000); // Buzzer ON
+  } else {
+    noTone(buzzerPin); // Buzzer OFF
+  }
+
+  delay(100);
+}
+2 and 8: RGB LED + Ultrasonic Sensor (Color Based on Distance)
+#include <NewPing.h>
+#define TRIG_PIN 7
+#define ECHO_PIN 6
+#define MAX_DISTANCE 200
+
+NewPing sonar(TRIG_PIN, ECHO_PIN, MAX_DISTANCE);
+
+int redPin = 9;
+int greenPin = 10;
+int bluePin = 11;
+
+void setup() {
+  pinMode(redPin, OUTPUT);
+  pinMode(greenPin, OUTPUT);
+  pinMode(bluePin, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int distance = sonar.ping_cm();
+
+  if (distance < 10) {
+    analogWrite(redPin, 255); // Close = Red
+    analogWrite(greenPin, 0);
+    analogWrite(bluePin, 0);
+  } else if (distance < 50) {
+    analogWrite(redPin, 0);
+    analogWrite(greenPin, 255); // Medium = Green
+    analogWrite(bluePin, 0);
+  } else {
+    analogWrite(redPin, 0);
+    analogWrite(greenPin, 0);
+    analogWrite(bluePin, 255); // Far = Blue
+  }
+
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+  delay(100);
+}
+3 and 4: Potentiometer + Light Detection (Adjust LED Blink Rate Based on Light Intensity)
+int ledPin = 9; 
+int potPin = A0; 
+int photoPin = A1;
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int potValue = analogRead(potPin);
+  int lightValue = analogRead(photoPin);
+  int blinkRate = map(lightValue, 0, 1023, 100, 1000);
+
+  digitalWrite(ledPin, HIGH);
+  delay(blinkRate * potValue / 1023);  // Blink rate depends on potentiometer and light
+  digitalWrite(ledPin, LOW);
+  delay(blinkRate * potValue / 1023);
+
+  Serial.print("Light Intensity: ");
+  Serial.println(lightValue);
+}
+3 and 5: Potentiometer + Temperature Sensor (Adjust LED Brightness Based on Temperature)
+int ledPin = 9;
+int potPin = A0;
+int tempPin = A1;
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int potValue = analogRead(potPin);
+  int tempValue = analogRead(tempPin);
+  int tempC = (tempValue * 5.0 * 100.0) / 1023;
+
+  int brightness = map(tempC, 0, 50, 0, potValue); // Potentiometer limits brightness
+  analogWrite(ledPin, brightness);
+
+  Serial.print("Temperature: ");
+  Serial.print(tempC);
+  Serial.println(" C");
+}
+3 and 6: Potentiometer + Servo Motor (Control Servo Position with Potentiometer)
+#include <Servo.h>
+Servo myServo;
+
+int potPin = A0;
+
+void setup() {
+  myServo.attach(9);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int potValue = analogRead(potPin);
+  int angle = map(potValue, 0, 1023, 0, 180);
+  myServo.write(angle);
+
+  Serial.print("Servo Angle: ");
+  Serial.println(angle);
+  delay(100);
+}
+3 and 7: Potentiometer + Active Buzzer (Control Buzzer Tone with Potentiometer)
+int potPin = A0;
+int buzzerPin = 9;
+
+void setup() {
+  pinMode(buzzerPin, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int potValue = analogRead(potPin);
+  int toneFreq = map(potValue, 0, 1023, 100, 2000);
+
+  tone(buzzerPin, toneFreq);
+  Serial.print("Buzzer Frequency: ");
+  Serial.println(toneFreq);
+  delay(100);
+}
+3 and 8: Potentiometer + Ultrasonic Sensor (Control Distance Measurement Interval)
+#include <NewPing.h>
+#define TRIG_PIN 7
+#define ECHO_PIN 6
+#define MAX_DISTANCE 200
+
+NewPing sonar(TRIG_PIN, ECHO_PIN, MAX_DISTANCE);
+int potPin = A0;
+
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  int potValue = analogRead(potPin);
+  int interval = map(potValue, 0, 1023, 50, 1000);
+
+  int distance = sonar.ping_cm();
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+
+  delay(interval);
+}
+4 and 5: Light Detection + Temperature Sensor (Change LED Based on Light and Temperature)
+int ledPin = 9;
+int photoPin = A0;
+int tempPin = A1;
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int lightValue = analogRead(photoPin);
+  int tempValue = analogRead(tempPin);
+  int tempC = (tempValue * 5.0 * 100.0) / 1023;
+
+  if (lightValue < 500 && tempC > 30) {
+    digitalWrite(ledPin, HIGH); // Light detected + High temp
+  } else {
+    digitalWrite(ledPin, LOW); // Other cases
+  }
+
+  Serial.print("Light: ");
+  Serial.print(lightValue);
+  Serial.print(", Temperature: ");
+  Serial.println(tempC);
+  delay(100);
+}
+4 and 6: Light Detection + Servo Motor (Move Servo Based on Light Intensity)
+#include <Servo.h>
+Servo myServo;
+
+int photoPin = A0;
+
+void setup() {
+  myServo.attach(9);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int lightValue = analogRead(photoPin);
+  int angle = map(lightValue, 0, 1023, 0, 180);
+
+  myServo.write(angle);
+  Serial.print("Light Intensity: ");
+  Serial.print(lightValue);
+  Serial.print(", Servo Angle: ");
+  Serial.println(angle);
+  delay(100);
+}
+4 and 7: Light Detection + Active Buzzer (Sound Buzzer at Low Light)
+int photoPin = A0;
+int buzzerPin = 9;
+
+void setup() {
+  pinMode(buzzerPin, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int lightValue = analogRead(photoPin);
+
+  if (lightValue < 500) {
+    tone(buzzerPin, 1000); // Buzzer ON for low light
+  } else {
+    noTone(buzzerPin); // Buzzer OFF
+  }
+
+  Serial.print("Light Intensity: ");
+  Serial.println(lightValue);
+  delay(100);
+}
+4 and 8: Light Detection + Ultrasonic Sensor (Measure Distance in Low Light)
+#include <NewPing.h>
+#define TRIG_PIN 7
+#define ECHO_PIN 6
+#define MAX_DISTANCE 200
+
+NewPing sonar(TRIG_PIN, ECHO_PIN, MAX_DISTANCE);
+int photoPin = A0;
+
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  int lightValue = analogRead(photoPin);
+
+  if (lightValue < 500) {
+    int distance = sonar.ping_cm();
+    Serial.print("Light Low. Distance: ");
+    Serial.print(distance);
+    Serial.println(" cm");
+  } else {
+    Serial.println("Light Level OK");
+  }
+
+  delay(100);
+}
+5 and 6: Temperature Sensor + Servo Motor (Control Servo Based on Temperature)
+#include <Servo.h>
+Servo myServo;
+
+int tempPin = A0;
+
+void setup() {
+  myServo.attach(9);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int tempValue = analogRead(tempPin);
+  int tempC = (tempValue * 5.0 * 100.0) / 1023;
+
+  int angle = map(tempC, 0, 50, 0, 180); // Map temperature to servo angle
+  myServo.write(angle);
+
+  Serial.print("Temperature: ");
+  Serial.print(tempC);
+  Serial.print(" C, Servo Angle: ");
+  Serial.println(angle);
+  delay(100);
+}
+5 and 7: Temperature Sensor + Active Buzzer (Sound Buzzer at High Temperature)
+int tempPin = A0;
+int buzzerPin = 9;
+
+void setup() {
+  pinMode(buzzerPin, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int tempValue = analogRead(tempPin);
+  int tempC = (tempValue * 5.0 * 100.0) / 1023;
+
+  if (tempC > 30) {
+    tone(buzzerPin, 1000); // Sound buzzer if temperature > 30°C
+  } else {
+    noTone(buzzerPin); // Stop buzzer
+  }
+
+  Serial.print("Temperature: ");
+  Serial.print(tempC);
+  Serial.println(" C");
+  delay(100);
+}
+5 and 8: Temperature Sensor + Ultrasonic Sensor (Show Temperature and Distance)
+#include <NewPing.h>
+#define TRIG_PIN 7
+#define ECHO_PIN 6
+#define MAX_DISTANCE 200
+
+NewPing sonar(TRIG_PIN, ECHO_PIN, MAX_DISTANCE);
+int tempPin = A0;
+
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  int tempValue = analogRead(tempPin);
+  int tempC = (tempValue * 5.0 * 100.0) / 1023;
+
+  int distance = sonar.ping_cm();
+
+  Serial.print("Temperature: ");
+  Serial.print(tempC);
+  Serial.print(" C, Distance: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+  delay(100);
+}
+6 and 7: Servo Motor + Active Buzzer (Control Buzzer Based on Servo Position)
+#include <Servo.h>
+Servo myServo;
+
+int potPin = A0;
+int buzzerPin = 9;
+
+void setup() {
+  myServo.attach(9);
+  pinMode(buzzerPin, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int potValue = analogRead(potPin);
+  int angle = map(potValue, 0, 1023, 0, 180);
+  myServo.write(angle);
+
+  if (angle > 90) {
+    tone(buzzerPin, 1000); // Buzzer ON for servo angle > 90°
+  } else {
+    noTone(buzzerPin); // Buzzer OFF
+  }
+
+  Serial.print("Servo Angle: ");
+  Serial.print(angle);
+  Serial.println("°");
+  delay(100);
+}
+6 and 8: Servo Motor + Ultrasonic Sensor (Move Servo Based on Distance)
+#include <Servo.h>
+#include <NewPing.h>
+#define TRIG_PIN 7
+#define ECHO_PIN 6
+#define MAX_DISTANCE 200
+
+Servo myServo;
+NewPing sonar(TRIG_PIN, ECHO_PIN, MAX_DISTANCE);
+
+void setup() {
+  myServo.attach(9);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int distance = sonar.ping_cm();
+  int angle = map(distance, 0, 200, 0, 180); // Map distance to servo angle
+
+  myServo.write(angle);
+
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.print(" cm, Servo Angle: ");
+  Serial.println(angle);
+  delay(100);
+}
+7 and 8: Active Buzzer + Ultrasonic Sensor (Sound Buzzer Based on Distance)
+#include <NewPing.h>
+#define TRIG_PIN 7
+#define ECHO_PIN 6
+#define MAX_DISTANCE 200
+
+NewPing sonar(TRIG_PIN, ECHO_PIN, MAX_DISTANCE);
+int buzzerPin = 9;
+
+void setup() {
+  pinMode(buzzerPin, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int distance = sonar.ping_cm();
+
+  if (distance > 0 && distance < 20) {
+    tone(buzzerPin, 1000); // Sound buzzer if object is within 20 cm
+  } else {
+    noTone(buzzerPin); // Stop buzzer
+  }
+
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+  delay(100);
+}

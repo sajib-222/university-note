@@ -1,0 +1,155 @@
+#include <graphics.h>
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    int gd = DETECT, gm;
+    initgraph(&gd, &gm, "");
+
+
+
+    // sun
+    setcolor(RED);
+    for (int i=0;i<50;i++){
+        ellipse(550, 80, 0, 360, 60-i, 50-i);
+    }
+    setcolor(YELLOW);
+    ellipse(550, 80, 0, 360, 61, 51);
+    ellipse(550, 80, 0, 360, 62, 52);
+    ellipse(550, 80, 0, 360, 63, 53);
+    ellipse(550, 80, 0, 360, 64, 54);
+    // Sun rays
+    line(550, 20, 550, 0);  
+    line(550, 140, 550, 160); 
+    line(480, 80, 450, 80);   
+    line(620, 80, 650, 80);   
+    line(500, 40, 460, 10);  
+    line(600, 120, 650, 150); 
+    line(500, 120, 450, 150); 
+    line(600, 40, 650, 10);    
+
+
+
+    // Grass
+    setcolor(GREEN);
+    for (int i=0;i<500;i++){
+          line(0,450+i,4000,350+i);
+        }
+
+
+
+    // Poand
+    setcolor(CYAN);
+    for (int i=0;i<170;i++){
+        ellipse(1250, 600, 0, 360, 100+i, 0+i);
+    }
+
+
+
+    // Rocks or puddel
+    setcolor(BROWN);
+    for (int i=0;i<40;i++){
+        circle(980,700,0+i);
+    }
+     for (int i=0;i<30;i++){
+        circle(1020,750,0+i);
+    }
+    for (int i=0;i<20;i++){
+        circle(1020,710,0+i);
+    }
+
+
+
+    // CAR body
+    rectangle(10, 350, 150, 400);
+    // windows
+    setcolor(CYAN);
+    rectangle(30, 360, 60, 390); // Left window
+    rectangle(100, 360, 130, 390); // Right window
+    // wheels
+    circle(30, 410, 10); // Front wheel
+    circle(130, 410, 10); // Back wheel
+
+
+
+    // Road
+    line(0,335,4000,260);
+    // Lane
+    for(int i=0;i<5;i++){
+    rectangle(200+i ,380+i , 250-i , 385-i);
+    rectangle(350+i,379 +i, 400 -i, 384-i);
+    rectangle(500 +i,378 +i, 550 -i, 383-i);
+    rectangle(650 +i,375 +i, 700 -i, 380-i);
+    rectangle(800 +i,372 +i, 850 -i, 377-i);
+    rectangle(950 +i,370 +i, 1000 -i, 375-i);
+    rectangle(1100 +i,367 +i, 1150 -i, 372-i);
+    rectangle(1250 +i,365 +i, 1300 -i, 370-i);
+    rectangle(1400 +i,360 +i, 1450 -i, 365-i);
+    rectangle(1525 +i,360+i , 1650 -i, 365-i);
+    }
+
+
+    // First tree
+    setcolor(BROWN);
+    for(int i = 0; i < 15; i++) {
+        rectangle(1200 + i, 210 + i, 1220 - i, 310 - i); // Adjusted coordinates for the trunk
+    }
+    for(int i=0;i<50;i++){
+    setcolor(LIGHTGREEN);
+    circle(1207, 170, 50-i); // Top leaf
+    circle(1170, 190, 50-i); // Second leaf
+    circle(1240, 190, 50-i); // Third leaf
+    }
+
+
+
+    // Second tree
+    setcolor(BROWN);
+    for(int i=0;i<15;i++){
+    rectangle(1400+i, 210+i, 1420-i, 310-i);
+    }
+    setcolor(LIGHTGREEN);
+    for(int i=0;i<50;i++){
+     circle(1407, 170, 50-i); // Top leaf
+     circle(1370, 190, 50-i); // Second leaf
+     circle(1440, 190, 50-i); // Third leaf
+    }
+
+
+    // First buildin
+    setcolor(LIGHTBLUE);
+    rectangle(20, 320, 120, 50);
+    rectangle(60, 320, 80, 290);
+    // windows
+    setcolor(LIGHTGRAY);
+    rectangle(30, 250, 50, 280);
+    rectangle(90, 250, 110, 280);
+    rectangle(30, 180, 50, 210);
+    rectangle(90, 180, 110, 210);
+    rectangle(30, 120, 50, 150);
+    rectangle(90, 120, 110, 150);
+    rectangle(30, 60, 50, 90);
+    rectangle(90, 60, 110, 90);
+    
+    
+    // Second buildin
+    setcolor(LIGHTBLUE);
+    rectangle(150, 320, 250, 100);
+    rectangle(190, 320, 210, 290);
+    // windows
+    setcolor(LIGHTGRAY);
+    rectangle(160, 250, 180, 280);
+    rectangle(220, 250, 240, 280);
+    rectangle(160, 180, 180, 210);
+    rectangle(220, 180, 240, 210);
+    rectangle(160, 120, 180, 150);
+    rectangle(220, 120, 240, 150);
+
+
+
+
+
+    getch();
+    closegraph();
+    return 0;
+}

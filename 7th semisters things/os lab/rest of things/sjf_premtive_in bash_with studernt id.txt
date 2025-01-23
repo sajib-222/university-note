@@ -1,0 +1,88 @@
+#!/bin/bash
+
+# Function to generate a unique ID based on the student ID
+generateUniqueID() {
+    local studentID=$1
+    local uniqueCode=0
+    for (( i=0; i<${#studentID}; i++ )); do
+        uniqueCode=$(( uniqueCode + $(printf "%d" "'${studentID:$i:1}") ))
+    done
+    echo "Unique ID based on Student ID ($studentID): $uniqueCode"
+}
+
+# Replace with your actual Student ID
+studentID="123456"  # Example Student ID, replace with actual ID
+generateUniqueID $studentID
+
+# SJF Preemptive Scheduling Implementation
+
+# Example data for processes with arrival times and burst times
+# Replace with actual values as needed
+processes=(1 2 3 4)              # Process IDs
+arrival_times=(0 1 2 3)          # Arrival times of processes
+burst_times=(5 3 8 6)            # Burst times of processes
+n=${#processes[@]}               # Number of processes
+
+# Initialize variables
+remaining_burst_times=("${burst_times[@]}")
+completion_times=()
+waiting_times=()
+turnaround_times=()
+current_time=0
+completed=0
+visited=()
+
+# Mark all processes as unvisited
+for (( i=0; i<n; i++ )); do
+    visited[i]=0
+done
+
+# Preemptive SJF scheduling
+while (( completed < n )); do
+    # Find the process with the shortest remaining burst time that has arrived
+    min_time=9999
+    shortest=-1
+    for (( i=0; i<n; i++ )); do
+        if (( arrival_times[i] <= current_time && visited[i] == 0 && remaining_burst_times[i] < min_time && remaining_burst_times[i] > 0 )); then
+            min_time=${remaining_burst_times[i]}
+            shortest=$i
+        fi
+    done
+    
+    if (( shortest == -1 )); then
+        (( current_time++ ))
+        continue
+    fi
+
+    # Process the selected process for one unit of time
+    (( remaining_burst_times[shortest]-- ))
+    (( current_time++ ))
+
+    # Check if the process is completed
+    if (( remaining_burst_times[shortest] == 0 )); then
+        completion_times[shortest]=$current_time
+        turnaround_times[shortest]=$(( completion_times[shortest] - arrival_times[shortest] ))
+        waiting_times[shortest]=$(( turnaround_times[shortest] - burst_times[shortest] ))
+        visited[shortest]=1
+        (( completed++ ))
+    fi
+done
+
+# Display results
+echo -e "\nProcess\tArrival\tBurst\tCompletion\tWaiting\tTurnaround"
+for (( i=0; i<n; i++ )); do
+    echo -e "${processes[i]}\t${arrival_times[i]}\t${burst_times[i]}\t${completion_times[i]}\t\t${waiting_times[i]}\t${turnaround_times[i]}"
+done
+
+# Calculate and display average waiting time and turnaround time
+total_waiting=0
+total_turnaround=0
+for (( i=0; i<n; i++ )); do
+    total_waiting=$(( total_waiting + waiting_times[i] ))
+    total_turnaround=$(( total_turnaround + turnaround_times[i] ))
+done
+average_waiting=$(echo "scale=2; $total_waiting / $n" | bc)
+average_turnaround=$(echo "scale=2; $total_turnaround / $n" | bc)
+
+echo -e "\nAverage Waiting Time: $average_waiting"
+echo -e "Average Turnaround Time: $average_turnaround"

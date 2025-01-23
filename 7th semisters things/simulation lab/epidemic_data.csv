@@ -1,0 +1,6 @@
+region,population,initial_infected,infection_rate,recovery_rate
+Region_A,1000,10,0.2,0.1
+Region_B,1500,20,0.3,0.05
+Region_C,2000,5,0.1,0.2
+Region_D,500,2,0.25,0.15
+Region_E,800,15,0.4,0.1

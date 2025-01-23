@@ -1,0 +1,77 @@
+#include <Servo.h>
+
+// Pin definitions
+const int TRIG_PIN = 10;
+const int ECHO_PIN = 9;
+const int BUZZER_PIN = 8;
+const int BUTTON_PIN = 13;
+const int SERVO_PIN = 7;
+
+Servo gateServo;
+bool vehicleDetected = false;
+
+void setup() {
+  pinMode(TRIG_PIN, OUTPUT);
+  pinMode(ECHO_PIN, INPUT);
+  pinMode(BUZZER_PIN, OUTPUT);
+  pinMode(BUTTON_PIN, INPUT_PULLUP);
+  
+  gateServo.attach(SERVO_PIN);
+  gateServo.write(0);  // Close gate initially
+  
+  Serial.begin(9600);
+  Serial.println("System initialized");
+}
+
+int getDistance() {
+  digitalWrite(TRIG_PIN, LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIG_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN, LOW);
+  
+  long duration = pulseIn(ECHO_PIN, HIGH);
+  return duration * 0.034 / 2;
+}
+
+void loop() {
+  int distance = getDistance();
+  Serial.print("Distance: ");
+  Serial.println(distance);
+  
+  // Check for vehicle only if none detected yet
+  if (distance < 20 && !vehicleDetected) {
+    vehicleDetected = true;
+    Serial.println("Vehicle detected!");
+    
+    // Sound buzzer until button is pressed
+    Serial.println("Waiting for button press...");
+    while (digitalRead(BUTTON_PIN) == HIGH) {
+      // Toggle buzzer on and off for beeping effect
+      digitalWrite(BUZZER_PIN, HIGH);
+      delay(200);  // Buzzer on time
+      digitalWrite(BUZZER_PIN, LOW);
+      delay(200);  // Buzzer off time
+      
+    }
+    
+    // Turn off buzzer
+    digitalWrite(BUZZER_PIN, LOW);
+    
+    // Button was pressed
+    Serial.println("Button pressed - Opening gate");
+    
+    // Open gate
+    gateServo.write(90);
+    delay(5000);
+    
+    // Close gate
+    Serial.println("Closing gate");
+    gateServo.write(0);
+    
+    vehicleDetected = false;
+    delay(1000);  // Prevent immediate retriggering
+  }
+  
+  delay(100);
+}
